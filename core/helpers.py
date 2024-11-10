@@ -32,7 +32,7 @@ def is_valid_domain(domain):
     except idna.IDNAError:
         return False
     
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 import requests
 

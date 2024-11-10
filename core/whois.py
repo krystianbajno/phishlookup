@@ -1,6 +1,7 @@
+import logging
 import whois
 import time
-from core.helpers import logger
+logging.getLogger('whois').setLevel(logging.CRITICAL)
 
 class WhoisLookup:
     MAX_RETRIES = 3
@@ -25,10 +26,8 @@ class WhoisLookup:
                 }
             except Exception as e:
                 if attempt < self.MAX_RETRIES - 1:
-                    logger.warning(f"Error during WHOIS lookup for {self.domain} (attempt {attempt + 1}): {e}")
                     time.sleep(self.RETRY_DELAY)
                 else:
-                    logger.error(f"WHOIS lookup failed for {self.domain} after {self.MAX_RETRIES} attempts: {e}")
                     return {'error': 'WHOIS lookup failed', 'details': str(e)}
         return {'error': 'WHOIS lookup failed after retries'}
 
@@ -40,5 +39,5 @@ class WhoisLookup:
                 return value[0]
             return value
         except Exception as e:
-            logger.warning(f"Failed to retrieve attribute {attr} from WHOIS data: {e}")
+            # logger.warning(f"Failed to retrieve attribute {attr} from WHOIS data: {e}")
             return None

@@ -31,34 +31,52 @@ class Fuzzer:
             return []
 
     def generate_permutations(self):
+        print("[*] Generating permutations...")
         self.permutations = {self.full_domain()}
 
         base_domains = [self.full_domain()]
         for method in [
             self.addition, self.bitsquatting, self.homoglyphs, self.hyphenation, self.dotting,
             self.insertion, self.omission, self.pluralization, self.repetition,
-            self.replacement, self.subdomain_permutations, self.transposition,
+            self.replacement, self.transposition,
             self.vowel_swap, self.dictionary_words, self.double_insertion,
-            self.keyboard_proximity, self.inverted_domains, self.repeated_characters,
+            self.keyboard_proximity, self.repeated_characters,
         ]:
             self.permutations.update(method(base_domains))
 
-        self.permutations.update(self.generate_all_tld_permutations())
-
         self.permutations = [*{domain.lower() for domain in self.permutations if domain and is_valid_domain(domain)}]
-        self.permutations.sort()
+        self.permutations.extend([domain.lower() for domain in self.generate_all_tld_permutations() if domain and is_valid_domain(domain)])
 
+        print(f"[+] Generated {len(self.permutations)} permutations.")
+        
         return self.permutations
-    
+        
     def generate_all_tld_permutations(self):
         if not self.tld_dictionary:
             print("No TLD dictionary loaded.")
             return set()
-
-        base_domain = self.domain
-        permutations = {f"{base_domain}.{tld}" for tld in self.tld_dictionary if tld != self.tld}
+        
+        permutations = set()
+        for domain in self.permutations:
+            domain_parts = domain.split('.')
+            if len(domain_parts) > 1:
+                base_domain = '.'.join(domain_parts[:-1])
+                for tld in self.tld_dictionary:
+                    if tld != self.tld:
+                        permutations.add(f"{base_domain}.{tld}")
+                        
         return permutations
-
+    
+    def generate_subdomain_permutations(self):
+        decoys = ["www", "mail", "secure", "microsoft", "login", "mfa", "onmicrosoft", "auth", "register"]
+        results = set()
+        
+        for domain in self.permutations:
+            if not self.subdomain:
+                results.update(f"{decoy}.{domain}" for decoy in decoys)
+            else:
+                results.add(domain)
+        return results
 
     def full_domain(self, domain_part=None, tld_part=None):
         domain_part = domain_part if domain_part else self.domain
@@ -177,17 +195,7 @@ class Fuzzer:
                 c = domain[i]
                 if c in keyboard_adjacent:
                     results.update(domain[:i] + adj + domain[i+1:] for adj in keyboard_adjacent[c])
-        return results
-
-    def subdomain_permutations(self, domains):
-        decoys = ["www", "mail", "secure", "microsoft", "login", "mfa", "onmicrosoft", "auth", "register"]
-        results = set()
-        for domain in domains:
-            if not self.subdomain:
-                results.update(f"{decoy}.{domain}" for decoy in decoys)
-            else:
-                results.add(domain)
-        return results
+        return results 
 
     def transposition(self, domains):
         return {domain[:i] + domain[i+1] + domain[i] + domain[i+2:] for domain in domains for i in range(len(domain) - 1)}
@@ -275,10 +283,6 @@ class Fuzzer:
                 if c in keyboard:
                     results.update(domain[:i] + adj + domain[i+1:] for adj in keyboard[c])
         return results
-    
-    def inverted_domains(self, domains):
-        return {domain[::-1] for domain in domains}
-
 
     def repeated_characters(self, domains, min_repeats=2, max_repeats=5):
         results = set()
