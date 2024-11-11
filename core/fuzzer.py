@@ -38,15 +38,15 @@ class Fuzzer:
         for method in [
             self.addition, self.bitsquatting, self.homoglyphs, self.hyphenation, self.dotting,
             self.insertion, self.omission, self.pluralization, self.repetition,
-            self.replacement, self.transposition,
+            self.replacement, self.transposition, self.visually_similar_characters,
             self.vowel_swap, self.dictionary_words, self.double_insertion,
-            self.keyboard_proximity, self.repeated_characters,
+            self.keyboard_proximity, self.repeated_characters, self.all_possible_deletions
         ]:
             self.permutations.update(method(base_domains))
 
         self.permutations = [*{domain.lower() for domain in self.permutations if domain and is_valid_domain(domain)}]
         self.permutations.extend([domain.lower() for domain in self.generate_all_tld_permutations() if domain and is_valid_domain(domain)])
-
+        
         print(f"[+] Generated {len(self.permutations)} permutations.")
         
         return self.permutations
@@ -292,82 +292,109 @@ class Fuzzer:
                 for n in range(min_repeats, max_repeats + 1):
                     results.add(domain[:i] + domain[i] * n + domain[i+1:])
         return results
+    
+    def all_possible_deletions(self, domains):
+        results = set()
+        for domain in domains:
+            if '.' in domain:
+                parts = domain.rsplit('.', 1)
+                domain_name, tld = parts[0], parts[1]
 
-def visually_similar_characters(self, domain, custom_mappings=None):
-    non_punycode_similar_chars = {
-        'a': ['à', 'á', 'â', 'ã', 'ä', 'å'],
-        'c': ['ç'],
-        'e': ['é', 'è', 'ê', 'ë'],
-        'i': ['í', 'ì', 'î', 'ï'],
-        'n': ['ñ'],
-        'o': ['ó', 'ò', 'ô', 'ö', 'õ'],
-        'u': ['ú', 'ù', 'û', 'ü'],
-        'y': ['ý', 'ÿ'],
-        's': ['ş'],
-        'g': ['ğ'],
-        'l': ['1', 'I'],
-        '1': ['l', 'I'],
-        'I': ['l', '1'],
-        'm': ['rn'],
-        'rn': ['m'],
-        'o': ['0'],
-        '0': ['o'],
-        'u': ['v'],
-        'v': ['u'],
-        'p': ['b'],
-        'b': ['p'],
-        'd': ['cl'],
-        'h': ['b'],
-        's': ['5', 'z'],
-        'z': ['s', '2']
-    }
+                for i in range(len(domain_name)):
+                    mutated_domain = domain_name[:i] + domain_name[i + 1:]
+                    results.add(f"{mutated_domain}.{tld}")
+            else:
+                for i in range(len(domain)):
+                    mutated_domain = domain[:i] + domain[i + 1:]
+                    results.add(mutated_domain)
+        return results
 
-    punycode_similar_chars = {
-        'a': ['а'],
-        'b': ['в'],
-        'c': ['с'],
-        'e': ['е'],
-        'h': ['һ', 'н'],
-        'i': ['і'],
-        'j': ['ј'],
-        'k': ['к'],
-        'm': ['м'],
-        'n': ['п'],
-        'o': ['о'],
-        'p': ['р'],
-        'r': ['г'],
-        's': ['ѕ'],
-        't': ['т'],
-        'u': ['ц'],
-        'x': ['х'],
-        'y': ['у'],
-        'z': ['з'],
-        'g': ['Ԍ', 'ԍ'],
-        'w': ['ѡ'],
-        'o': ['ö'],
-        'u': ['ü'],
-        's': ['ş'],
-        'ç': ['c'],
-        'ğ': ['g'],
-        'ı': ['i']
-    }
+    def visually_similar_characters(self, domain, custom_mappings=None):
+        non_punycode_similar_chars = {
+            'a': ['à', 'á', 'â', 'ã', 'ä', 'å'],
+            'c': ['ç'],
+            'e': ['é', 'è', 'ê', 'ë'],
+            'i': ['í', 'ì', 'î', 'ï'],
+            'n': ['ñ'],
+            'o': ['ó', 'ò', 'ô', 'ö', 'õ'],
+            'u': ['ú', 'ù', 'û', 'ü'],
+            'y': ['ý', 'ÿ'],
+            's': ['ş'],
+            'g': ['ğ'],
+            'l': ['1', 'I'],
+            '1': ['l', 'I'],
+            'I': ['l', '1'],
+            'm': ['rn'],
+            'f': ['t'],
+            't': ['f'],
+            'rn': ['m'],
+            'o': ['0'],
+            '0': ['o'],
+            'u': ['v'],
+            'v': ['u'],
+            'p': ['b'],
+            'b': ['p'],
+            'd': ['cl'],
+            'h': ['b'],
+            's': ['5', 'z'],
+            'z': ['s', '2']
+        }
 
-    if custom_mappings:
-        non_punycode_similar_chars.update(custom_mappings.get('non_punycode', {}))
-        punycode_similar_chars.update(custom_mappings.get('punycode', {}))
+        punycode_similar_chars = {
+            'a': ['а'],
+            'b': ['в'],
+            'c': ['с'],
+            'e': ['е'],
+            'h': ['һ', 'н'],
+            'i': ['і'],
+            'j': ['ј'],
+            'k': ['к'],
+            'm': ['м'],
+            'n': ['п'],
+            'o': ['о'],
+            'p': ['р'],
+            'r': ['г'],
+            's': ['ѕ'],
+            't': ['т'],
+            'u': ['ц'],
+            'x': ['х'],
+            'y': ['у'],
+            'z': ['з'],
+            'g': ['Ԍ', 'ԍ'],
+            'w': ['ѡ'],
+            'o': ['ö'],
+            'u': ['ü'],
+            's': ['ş'],
+            'ç': ['c'],
+            'ğ': ['g'],
+            'ı': ['i']
+        }
 
-    permutations = set()
-    for i in range(len(domain)):
-        for orig, swaps in non_punycode_similar_chars.items():
-            if domain[i:i + len(orig)] == orig:
-                for swap in swaps:
-                    mutated = domain[:i] + swap + domain[i + len(orig):]
-                    permutations.add(mutated.lower())
+        if custom_mappings:
+            for key, values in custom_mappings.get('non_punycode', {}).items():
+                if key in non_punycode_similar_chars:
+                    non_punycode_similar_chars[key] = list(set(non_punycode_similar_chars[key] + values))
+                else:
+                    non_punycode_similar_chars[key] = values
 
-        for orig, swaps in punycode_similar_chars.items():
-            if domain[i:i + len(orig)] == orig:
-                for swap in swaps:
-                    mutated = domain[:i] + swap + domain[i + len(orig):]
-                    permutations.add(mutated.lower())
+            for key, values in custom_mappings.get('punycode', {}).items():
+                if key in punycode_similar_chars:
+                    punycode_similar_chars[key] = list(set(punycode_similar_chars[key] + values))
+                else:
+                    punycode_similar_chars[key] = values
 
-    return permutations
+        permutations = set()
+        for i in range(len(domain)):
+            for orig, swaps in non_punycode_similar_chars.items():
+                if domain[i:i + len(orig)] == orig:
+                    for swap in swaps:
+                        mutated = domain[:i] + swap + domain[i + len(orig):]
+                        permutations.add(mutated.lower())
+
+            for orig, swaps in punycode_similar_chars.items():
+                if domain[i:i + len(orig)] == orig:
+                    for swap in swaps:
+                        mutated = domain[:i] + swap + domain[i + len(orig):]
+                        permutations.add(mutated.lower())
+
+        return permutations
