@@ -1,6 +1,5 @@
 import threading
 from queue import Queue
-import requests
 from core.geoip import get_geoip_info
 from core.network import DNSResolver
 from core.whois import WhoisLookup
