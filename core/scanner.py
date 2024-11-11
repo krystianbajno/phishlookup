@@ -1,6 +1,7 @@
 import threading
 from queue import Queue
 import requests
+from core.geoip import get_geoip_info
 from core.network import DNSResolver
 from core.whois import WhoisLookup
 import idna
@@ -65,7 +66,7 @@ class Scanner:
 
         geoip_info = None
         if ip_address:
-            geoip_info = self.get_geoip_info(ip_address)
+            geoip_info = get_geoip_info(ip_address)
 
         try:
             encoded_domain = idna.encode(domain).decode('ascii')
@@ -82,17 +83,6 @@ class Scanner:
             'whois_status': whois_status
         }
         return result
-
-    def get_geoip_info(self, ip_address):
-        try:
-            response = requests.get(f'http://ip-api.com/json/{ip_address}')
-            if response.status_code == 200:
-                data = response.json()
-                if data['status'] == 'success':
-                    return f"{data.get('country', '')}, {data.get('city', '')}"
-        except Exception as e:
-            pass
-        return 'N/A'
 
     def print_result(self, result):
         RED = '\033[91m'
