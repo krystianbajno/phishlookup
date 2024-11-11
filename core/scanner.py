@@ -3,8 +3,9 @@ from queue import Queue
 from core.geoip import get_geoip_info
 from core.network import DNSResolver
 from core.whois import WhoisLookup
-import idna
 import csv
+
+from core.cli_printer import ConsolePrinter
 
 class Scanner:
     def __init__(self, permutations, threads=1000, output_file=None, output_format='csv', available_only=False, not_available_only=False):
@@ -16,7 +17,9 @@ class Scanner:
         self.results = []
         self.available_only = available_only
         self.not_available_only = not_available_only
-        self.header_printed = False
+        self.processed_count = 0
+        self.lock = threading.Lock()
+        self.printer = ConsolePrinter()
 
     def run_scans(self):
         for domain in self.permutations:
@@ -39,15 +42,22 @@ class Scanner:
             domain = self.queue.get()
             try:
                 result = self.scan_domain(domain)
+
+                with self.lock:
+                    self.processed_count += 1
+                    self.printer.print_progress(self.processed_count, len(self.permutations))
+
                 if result:
                     if self.available_only and result['is_available'] != "AVAILABLE":
                         continue
                     if self.not_available_only and result['is_available'] != "NOT AVAILABLE":
                         continue
-                    self.print_result(result)
-                    self.results.append(result)
+                    with self.lock:
+                        self.printer.print_header()
+                        self.printer.print_result(result)
             finally:
                 self.queue.task_done()
+
 
     def scan_domain(self, domain):
         dns_resolver = DNSResolver(domain)
@@ -68,6 +78,7 @@ class Scanner:
             geoip_info = get_geoip_info(ip_address)
 
         try:
+            import idna
             encoded_domain = idna.encode(domain).decode('ascii')
             punycode_status = "Y" if encoded_domain != domain else "N"
         except (idna.IDNAError, UnicodeEncodeError):
@@ -82,30 +93,6 @@ class Scanner:
             'whois_status': whois_status
         }
         return result
-
-    def print_result(self, result):
-        RED = '\033[91m'
-        GREEN = '\033[92m'
-        RESET = '\033[0m'
-
-        color = GREEN if result['is_available'] == "AVAILABLE" else RED
-        availability = f"{color}{result['is_available']}{RESET}"
-
-        if not self.header_printed:
-            headers = f"{'Domain':<50} | {'Available':<21} | {'IP Address':<15} | {'GeoLookup':<30} | {'Punycode':<8} | {'WHOIS Status'}"
-            separator = "-" * len(headers)
-            print(headers)
-            print(separator)
-            self.header_printed = True
-
-        decoded_domain = result['domain']
-        if result['punycode'] == "Y":
-            try:
-                decoded_domain = f"{result['domain']} ({idna.encode(result['domain']).decode()})"
-            except (idna.IDNAError, UnicodeDecodeError):
-                decoded_domain = " (decoding error)"
-
-        print(f"{decoded_domain:<50} | {availability:<30} | {result['ip_address']:<15} | {result['geoip']:<30} | {result['punycode']:<8} | {result['whois_status']}")
 
     def save_results(self):
         try:
