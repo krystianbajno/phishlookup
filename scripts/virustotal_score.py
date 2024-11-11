@@ -3,6 +3,10 @@ import argparse
 from typing import List, Union
 from playwright.async_api import async_playwright
 
+RED = "\033[91m"
+GREEN = "\033[92m"
+RESET = "\033[0m"
+
 class VirusTotalScoreClient:
     async def get_score(self, entity: Union[str, List[str]]) -> List[dict]:
         if isinstance(entity, str):
@@ -63,8 +67,10 @@ async def main():
     entities = parse_input()
     vt_client = VirusTotalScoreClient()
     results = await vt_client.get_score(entities)
+    print(f"subject,message,score")
     for result in results:
-        print(f"{result['subject']},{result['message']},{result['score']}")
+        color = GREEN if "No security vendors" in result['message'] else RED
+        print(f"{result['subject']},{color}{result['message']}{RESET},{result['score']}")
 
 if __name__ == "__main__":
     asyncio.run(main())
