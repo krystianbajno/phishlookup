@@ -1,10 +1,12 @@
 import argparse
+from core.cli import logo
 from core.fuzzer import Fuzzer
 from core.helpers import setup_logging
 from core.scanner import Scanner
 
 def main():
-    parser = argparse.ArgumentParser(description="Phishlookup - Advanced Domain Name Permutation and Scanning Tool")
+    print(logo())
+    parser = argparse.ArgumentParser(description="Phishlookup - Advanced phishing detection, domain name permutation, and scanning tool.")
     parser.add_argument('domain', help='Domain name or URL to scan')
     parser.add_argument('-d', '--dictionary', help='Path to dictionary file for additional permutations')
     parser.add_argument('-td', '--tld-dictionary', help='Path to TLD dictionary for TLD permutations')

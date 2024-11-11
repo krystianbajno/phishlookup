@@ -1,5 +1,5 @@
 # Phishlookup
-Phishlookup - Advanced Phishing detection, Domain Name Permutation and Scanning Tool.
+Phishlookup - Advanced phishing detection, domain name permutation and scanning tool.
 
 ```
       /`·.¸
