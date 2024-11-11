@@ -19,10 +19,11 @@ phishlookup.py <domain> --lookup # lookup if taken
 ```
 
 ```
-usage: phishlookup.py [-h] [-d DICTIONARY] [-td TLD_DICTIONARY] [-t THREADS] [-o OUTPUT] [--output-format {json,text}] [--only-resolved] [--available] [--taken] [-v]
+usage: phishlookup.py [-h] [-d DICTIONARY] [-td TLD_DICTIONARY] [-t THREADS] [-o OUTPUT] [--output-format {json,csv}] [--only-resolved] [--available] [--taken] [--lookup]
+                      [-v]
                       domain
 
-Phishlookup - Advanced phishing detection, domain name permutation and scanning tool.
+Phishlookup - Advanced phishing detection, domain name permutation, and scanning tool.
 
 positional arguments:
   domain                Domain name or URL to scan
@@ -42,5 +43,6 @@ options:
   --only-resolved       Show only domains that resolved to an IP
   --available           Show only available domains
   --taken               Show only taken domains
+  --lookup              Show only taken domains
   -v, --verbose         Increase verbosity level
 ```
