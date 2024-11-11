@@ -16,13 +16,17 @@ def main():
     parser.add_argument('--only-resolved', action='store_true', help='Show only domains that resolved to an IP')
     parser.add_argument('--available', action='store_true', help='Show only available domains')
     parser.add_argument('--taken', action='store_true', help='Show only taken domains')
+    parser.add_argument('--lookup', action='store_true', help='Show only taken domains')
     parser.add_argument('-v', '--verbose', action='count', default=0, help='Increase verbosity level')
 
     args = parser.parse_args()
     setup_logging(verbosity=args.verbose)
-
-    fuzzer = Fuzzer(args.domain, dictionary_path=args.dictionary, tld_dictionary=args.tld_dictionary)
-    permutations = fuzzer.generate_permutations()
+    
+    if args.lookup:
+        permutations = [args.domain]
+    else:
+        fuzzer = Fuzzer(args.domain, dictionary_path=args.dictionary, tld_dictionary=args.tld_dictionary)
+        permutations = fuzzer.generate_permutations()
 
     scanner = Scanner(permutations, threads=args.threads, output_file=args.output, output_format=args.output_format,
                       available_only=args.available, not_available_only=args.taken)
