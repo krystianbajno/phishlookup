@@ -2,14 +2,11 @@ import threading
 from queue import Queue
 from core.geoip import get_geoip_info
 from core.network import DNSResolver
+from core.saver import save_results
 from core.whois import WhoisLookup
-import csv
-
-from core.cli_printer import ConsolePrinter
 
 class Scanner:
-    def __init__(self, permutations, threads=1000, output_file=None, output_format='csv', available_only=False, not_available_only=False):
-        self.permutations = permutations
+    def __init__(self, threads=1000, output_file=None, output_format='csv', available_only=False, not_available_only=False, ui_update_queue=None):
         self.threads = threads
         self.queue = Queue()
         self.output_file = output_file
@@ -19,10 +16,10 @@ class Scanner:
         self.not_available_only = not_available_only
         self.processed_count = 0
         self.lock = threading.Lock()
-        self.printer = ConsolePrinter()
+        self.ui_update_queue = ui_update_queue
 
-    def run_scans(self):
-        for domain in self.permutations:
+    def run_scans(self, permutations):
+        for domain in permutations:
             self.queue.put(domain)
 
         thread_list = []
@@ -35,7 +32,7 @@ class Scanner:
             thread.join()
 
         if self.output_file:
-            self.save_results()
+            save_results(self.output_file, self.results, output_format=self.output_format)
 
     def worker(self):
         while not self.queue.empty():
@@ -43,21 +40,15 @@ class Scanner:
             try:
                 result = self.scan_domain(domain)
 
+                # Send the result to the UI update queue
+                self.ui_update_queue.put(('result', result))
+
+                # Update progress
                 with self.lock:
                     self.processed_count += 1
-                    self.printer.print_progress(self.processed_count, len(self.permutations))
-
-                if result:
-                    if self.available_only and result['is_available'] != "AVAILABLE":
-                        continue
-                    if self.not_available_only and result['is_available'] != "NOT AVAILABLE":
-                        continue
-                    with self.lock:
-                        self.printer.print_header()
-                        self.printer.print_result(result)
+                    self.ui_update_queue.put(('progress', self.processed_count, self.queue.qsize() + self.processed_count))
             finally:
                 self.queue.task_done()
-
 
     def scan_domain(self, domain):
         dns_resolver = DNSResolver(domain)
@@ -93,19 +84,3 @@ class Scanner:
             'whois_status': whois_status
         }
         return result
-
-    def save_results(self):
-        try:
-            with open(self.output_file, 'w', newline='') as f:
-                if self.output_format == 'json':
-                    import json
-                    json.dump(self.results, f, indent=2)
-                else:
-                    fieldnames = ['domain', 'is_available', 'ip_address', 'geoip', 'punycode', 'whois_status']
-                    writer = csv.DictWriter(f, fieldnames=fieldnames)
-                    writer.writeheader()
-                    for result in self.results:
-                        writer.writerow(result)
-            print(f"Results saved to {self.output_file}")
-        except Exception as e:
-            print(f"Error saving results to {self.output_file}: {e}")

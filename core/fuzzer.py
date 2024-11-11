@@ -3,12 +3,14 @@ import idna
 from core.helpers import domain_tld, fetch_tlds, is_valid_domain
 
 class Fuzzer:
-    def __init__(self, domain, dictionary_path=None, tld_dictionary=None):
+    def __init__(self, domain, controller=None, dictionary_path=None, tld_dictionary=None):
         self.subdomain, self.domain, self.tld = domain_tld(domain)
         self.domain_ascii = idna.decode(self.domain)
         self.dictionary = self.load_dictionary(dictionary_path)
         self.tld_dictionary = self.load_tld_dictionary(tld_dictionary) if tld_dictionary else fetch_tlds()
         self.permutations = set()
+        self.controller = controller  
+
 
     def load_dictionary(self, path):
         if not path:
@@ -17,7 +19,7 @@ class Fuzzer:
             with open(path, 'r', encoding='utf-8') as file:
                 return [line.strip().lower() for line in file if line.strip()]
         except Exception as e:
-            print(f"Error loading dictionary file: {e}")
+            self.controller.display_message(f"Error loading TLD dictionary file: {e}", color_pair=1)
             return []
 
     def load_tld_dictionary(self, path):
@@ -27,11 +29,13 @@ class Fuzzer:
             with open(path, 'r', encoding='utf-8') as file:
                 return [line.strip().lower() for line in file if line.strip()]
         except Exception as e:
-            print(f"Error loading TLD dictionary file: {e}")
+            self.controller.display_message(f"Error loading TLD dictionary file: {e}", color_pair=1)
             return []
 
     def generate_permutations(self):
-        print("[*] Generating permutations...")
+        if self.controller:
+            self.controller.display_message("[*] Generating permutations...", color_pair=3)
+        
         self.permutations = {self.full_domain()}
 
         base_domains = [self.full_domain()]
@@ -47,7 +51,8 @@ class Fuzzer:
         self.permutations = [*{domain.lower() for domain in self.permutations if domain and is_valid_domain(domain)}]
         self.permutations.extend([domain.lower() for domain in self.generate_all_tld_permutations() if domain and is_valid_domain(domain)])
         
-        print(f"[+] Generated {len(self.permutations)} permutations.")
+        if self.controller:
+            self.controller.display_message(f"[+] Generated {len(self.permutations)} permutations.", color_pair=3)
         
         return self.permutations
         
