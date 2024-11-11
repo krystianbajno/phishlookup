@@ -1,0 +1,11 @@
+org
+com
+net
+gov
+edu
+co
+mil
+nom
+ac
+info
+biz

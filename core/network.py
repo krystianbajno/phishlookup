@@ -1,5 +1,4 @@
 import dns.resolver
-# from core.helpers import logger
 
 class DNSResolver:
     def __init__(self, domain):
@@ -18,7 +17,6 @@ class DNSResolver:
         except dns.resolver.NXDOMAIN:
             records['A'] = []
         except Exception as e:
-            # logger.error(f"Error resolving A record for {self.domain}: {e}")
             records['A'] = []
 
         try:
@@ -29,7 +27,6 @@ class DNSResolver:
         except dns.resolver.NXDOMAIN:
             records['MX'] = []
         except Exception as e:
-            # logger.error(f"Error resolving MX record for {self.domain}: {e}")
             records['MX'] = []
 
         return records

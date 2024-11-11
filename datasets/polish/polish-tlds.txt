@@ -1,0 +1,11 @@
+org.pl
+com.pl
+net.pl
+gov.pl
+edu.pl
+co.pl
+mil.pl
+nom.pl
+ac.pl
+info.pl
+biz.pl

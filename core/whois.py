@@ -39,5 +39,4 @@ class WhoisLookup:
                 return value[0]
             return value
         except Exception as e:
-            # logger.warning(f"Failed to retrieve attribute {attr} from WHOIS data: {e}")
             return None

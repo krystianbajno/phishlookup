@@ -40,7 +40,6 @@ class Scanner:
             try:
                 result = self.scan_domain(domain)
                 if result:
-                    # Apply filtering logic based on availability
                     if self.available_only and result['is_available'] != "AVAILABLE":
                         continue
                     if self.not_available_only and result['is_available'] != "TAKEN":
@@ -93,7 +92,6 @@ class Scanner:
                     return f"{data.get('country', '')}, {data.get('city', '')}"
         except Exception as e:
             pass
-            # logger.error(f"Error during GeoIP lookup for {ip_address}: {e}")
         return 'N/A'
 
     def print_result(self, result):

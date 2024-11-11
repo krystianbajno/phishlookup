@@ -214,6 +214,7 @@ class Fuzzer:
         results = set()
         for domain in domains:
             results.update({domain + word, word + domain, domain + '-' + word, word + '-' + domain} for word in self.dictionary)
+            results.update({domain + word, word + domain, domain + '.' + word, word + '.' + domain} for word in self.dictionary)
         return results
     
     def tld_swap(self, domains):
