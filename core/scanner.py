@@ -42,7 +42,7 @@ class Scanner:
                 if result:
                     if self.available_only and result['is_available'] != "AVAILABLE":
                         continue
-                    if self.not_available_only and result['is_available'] != "TAKEN":
+                    if self.not_available_only and result['is_available'] != "NOT AVAILABLE":
                         continue
                     self.print_result(result)
                     self.results.append(result)
@@ -75,7 +75,7 @@ class Scanner:
 
         result = {
             'domain': domain,
-            'is_available': "TAKEN" if ip_address else "AVAILABLE",
+            'is_available': "NOT AVAILABLE" if ip_address else "AVAILABLE",
             'ip_address': ip_address or 'N/A',
             'geoip': geoip_info or 'N/A',
             'punycode': punycode_status,
