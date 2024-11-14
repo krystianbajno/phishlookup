@@ -20,7 +20,7 @@ Phishlookup - Advanced phishing detection, domain name permutation and scanning 
 phishlookup.py <domain> # show all
 phishlookup.py <domain> --available # show only available
 phishlookup.py <domain> --taken # show only taken
-phishlookup.py <domain> --lookup # lookup if taken
+phishlookup.py <domain> --lookup # lookup the single domain to determine if it was taken or is free to take
 ```
 
 ```
