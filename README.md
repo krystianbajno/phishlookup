@@ -1,5 +1,6 @@
 # Phishlookup
 [![CodeFactor](https://www.codefactor.io/repository/github/krystianbajno/phishlookup/badge)](https://www.codefactor.io/repository/github/krystianbajno/phishlookup)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/398a05eb37fc4e79a560cab910208ad6)](https://app.codacy.com/gh/krystianbajno/phishlookup?utm_source=github.com&utm_medium=referral&utm_content=krystianbajno/phishlookup&utm_campaign=Badge_Grade)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup.svg?type=shield&issueType=security)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup?ref=badge_shield&issueType=security)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup?ref=badge_shield)
 
