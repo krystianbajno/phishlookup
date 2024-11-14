@@ -1,4 +1,6 @@
 # Phishlookup
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup?ref=badge_shield)
+
 Phishlookup - Advanced phishing detection, domain name permutation and scanning tool.
 
 ```
@@ -46,3 +48,6 @@ options:
   --lookup              Show only taken domains
   -v, --verbose         Increase verbosity level
 ```
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkrystianbajno%2Fphishlookup?ref=badge_large)
