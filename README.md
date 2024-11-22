@@ -88,7 +88,7 @@ Phishlookup uses the following mutation techniques to generate domain permutatio
 - Double Insertion
 - Keyboard Proximity
 - Repeated Characters
-All Possible Deletions
+- All Possible Deletions
 
 Supports Custom TLDs and Dictionary Integration!
 
