@@ -71,23 +71,23 @@ options:
 # Methods
 Phishlookup uses the following mutation techniques to generate domain permutations:
 
-Addition
-Bitsquatting
-Homoglyphs
-Hyphenation
-Dotting
-Insertion
-Omission
-Pluralization
-Repetition
-Replacement
-Transposition
-Visually Similar Characters
-Vowel Swap
-Dictionary Words
-Double Insertion
-Keyboard Proximity
-Repeated Characters
+- Addition
+- Bitsquatting
+- Homoglyphs
+- Hyphenation
+- Dotting
+- Insertion
+- Omission
+- Pluralization
+- Repetition
+- Replacement
+- Transposition
+- Visually Similar Characters
+- Vowel Swap
+- Dictionary Words
+- Double Insertion
+- Keyboard Proximity
+- Repeated Characters
 All Possible Deletions
 
 Supports Custom TLDs and Dictionary Integration!
