@@ -95,16 +95,16 @@ Supports Custom TLDs and Dictionary Integration!
 # FAQ
 
 Q: Does this tool detect domains with special characters like Turkish letters or punycode?
+
 A: Yes, Phishlookup is fully equipped to handle punycode domains and special characters.
 
 Q: Can it identify typosquatting domains?
+
 A: Absolutely. The tool is designed to generate and detect common typosquatting variations.
 
 Q: What inspired the creation of this tool?
-A: This tool was inspired by [dnstwist](https://github.com/elceef/dnstwist) by [@elceef](https://github.com/elceef). Kudos to @elceef for their outstanding work! While dnstwist is excellent, Phishlookup aims to be more extensible and incorporate additional methods for domain permutations.
 
-Q: Why should I use Phishlookup over other tools?
-A: Phishlookup is easier to extend, offers more permutation methods, and provides a streamlined scanning process with a focus on speed and customization.
+A: This tool was inspired by [dnstwist](https://github.com/elceef/dnstwist) by [@elceef](https://github.com/elceef). Kudos to @elceef for their outstanding work! While dnstwist is excellent, Phishlookup aims to be more extensible and incorporate additional methods for domain permutations.
 
 # Contributing
 Contributions are welcome! Feel free to submit issues, feature requests, or pull requests to improve the tool.
