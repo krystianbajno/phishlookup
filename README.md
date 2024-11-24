@@ -20,7 +20,7 @@ Phishlookup is an advanced phishing detection, domain name permutation, and scan
 
 - **Comprehensive Permutations**: Supports a wide range of mutation methods to simulate potential phishing domains.
 - **TLD Variations**: Tests domains across different top-level domains (TLDs).
-- **Phishing Detection**: Identify domains that could be used for typosquatting or impersonation.
+- **Phishing Detection**: Identify domains that could be used for typosquatting or impersonation, including punycode letter domains.
 - **Fast & Extensible**: Uses multi-threading for quick scans and allows for easy integration of custom dictionaries and TLDs.
 
 # Installation
@@ -89,24 +89,10 @@ Phishlookup uses the following mutation techniques to generate domain permutatio
 - Repeated Characters
 - All Possible Deletions
 
-Supports Custom TLDs and Dictionary Integration!
+Supports Punycode, Custom TLDs and Dictionary Integration.
 
-# FAQ
-
-Q: Does this tool detect domains with special characters like Turkish letters or punycode?
-
-A: Yes, Phishlookup is fully equipped to handle punycode domains and special characters.
-
-Q: Can it identify typosquatting domains?
-
-A: Absolutely. The tool is designed to generate and detect common typosquatting variations.
-
-Q: What inspired the creation of this tool?
-
-A: This tool was inspired by [dnstwist](https://github.com/elceef/dnstwist) by [@elceef](https://github.com/elceef). Kudos to @elceef for their outstanding work! While dnstwist is excellent, Phishlookup aims to be more extensible and incorporate additional methods for domain permutations.
-
-# Contributing
-Contributions are welcome! Feel free to submit issues, feature requests, or pull requests to improve the tool.
+# Credits
+This tool was inspired by [dnstwist](https://github.com/elceef/dnstwist) by [@elceef](https://github.com/elceef).
 
 # License
 Phishlookup is licensed under the MIT License.
